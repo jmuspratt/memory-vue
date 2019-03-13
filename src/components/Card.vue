@@ -1,49 +1,45 @@
 <template>
-  <div class="card" @click="flip" >
-<div class="card__inner">
-    <div class="card__front"></div>
+  <a class="card" :class="{'card--up': faceUp }">
+    <div class="card__inner">
+      <div class="card__front"></div>
 
       <div class="card__back">
-        <img :src="url" />
+        <img :src="url">
       </div>
     </div>
-
-  </div>
+  </a>
 </template>
 
 <script>
 export default {
-  name: 'Card',
+  name: "Card",
   props: {
-    file: String
+    file: String,
+    faceUp: Boolean
   },
+
   data() {
     return {
-      url: '/' + this.file + '.png',
-    }
+      url: "/" + this.file + ".png"
+    };
   },
-  methods: {
-    flip($event) {
-      $event.target.classList.toggle('flipped')
-      this.$emit('flipped')
-    }
-  }
-}
+  methods: {}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-
 * {
   box-sizing: border-box;
 }
 .card {
+  display: block;
   border: 1px solid #ddd;
   border-radius: 15px;
   perspective: 1000px;
 }
 
-.card.flipped .card__inner {
+.card.card--up .card__inner {
   transform: rotateY(180deg);
 }
 
@@ -51,7 +47,7 @@ export default {
 .card__front,
 .card__back {
   // min-height: 300px;
-min-height: 200px;  
+  min-height: 200px;
 }
 
 .card * {
@@ -60,10 +56,9 @@ min-height: 200px;
 
 .card__inner {
   transition: 0.6s;
-	transform-style: preserve-3d;
-	position: relative;
+  transform-style: preserve-3d;
+  position: relative;
 }
-
 
 .card__front,
 .card__back {
@@ -77,17 +72,16 @@ min-height: 200px;
 }
 
 .card__front {
-  background: beige;
+  background: darkGray;
   z-index: 2;
 }
 
 .card__back {
-  	transform: rotateY(180deg);
+  transform: rotateY(180deg);
 }
 
-  img {
-    display: block;
-    max-width: 100%;
-  }
-
+img {
+  display: block;
+  max-width: 100%;
+}
 </style>
