@@ -14,11 +14,12 @@
 export default {
   name: "Card",
   props: {
-    file: String
+    animal: Object,
+    default: ()=> {},
   },
   data() {
     return {
-      url: "/" + this.file + ".png"
+      url: "/" + this.animal.image + ".png"
     };
   },
   methods: {
@@ -30,7 +31,6 @@ export default {
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 * {
   box-sizing: border-box;
@@ -47,6 +47,7 @@ export default {
 .card.flipped .card__inner {
   transform: rotateY(180deg);
 }
+
 
 .card__inner,
 .card__front,
