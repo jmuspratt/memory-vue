@@ -2,9 +2,7 @@
   <div class="card" @click="flip">
     <div class="card__inner">
       <div class="card__front"></div>
-
-      <div class="card__back">
-        <img :src="url">
+      <div class="card__back" :style="`background-image: url(${url})`">
       </div>
     </div>
   </div>
@@ -38,10 +36,9 @@ export default {
 .card {
   max-width: 100%;
   display: block;
-  border: 1px solid #ddd;
-  border-radius: 15px;
+  background-color: #efefef;
   perspective: 1000px;
-  overflow: hidden;
+  // overflow: hidden;
 }
 
 .card.flipped .card__inner {
@@ -52,7 +49,8 @@ export default {
 .card__inner,
 .card__front,
 .card__back {
-  min-height: 250px;
+  border-radius: 15px;
+  min-height: 200px;
 }
 
 .card * {
@@ -70,6 +68,10 @@ export default {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   position: absolute;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-color: #fff;
   top: 0;
   left: 0;
   width: 100%;
