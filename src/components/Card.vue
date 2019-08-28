@@ -2,7 +2,7 @@
   <div class="card" @click="flip">
     <div class="card__inner">
       <div class="card__front"></div>
-      <div class="card__back" :style="`background-image: url(${url})`">
+      <div class="card__back" :style="`background-image: url(${imgUrl})`">
       </div>
     </div>
   </div>
@@ -17,7 +17,7 @@ export default {
   },
   data() {
     return {
-      url: "/" + this.animal.image + ".png"
+      imgUrl: "/" + this.animal.image + ".png"
     };
   },
   methods: {
@@ -87,9 +87,4 @@ export default {
   transform: rotateY(180deg);
 }
 
-img {
-  display: block;
-  object-fit: cover;
-  object-position: 50% 50%;
-}
 </style>
