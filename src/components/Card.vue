@@ -1,7 +1,7 @@
 <template>
-  <div class="card" @click="flip">
+  <div :class="cardClasses" @click="tap">
     <div class="card__inner">
-      <div class="card__front"></div>
+      <div class="card__front">{{card.id}}</div>
       <div class="card__back" :style="`background-image: url(${imgUrl})`">
       </div>
     </div>
@@ -9,22 +9,38 @@
 </template>
 
 <script>
+ /* eslint-disable */
+
 export default {
   name: "Card",
   props: {
-    animal: Object,
-    default: ()=> {},
+    card: { 
+      type: Object,
+      default: ()=> {},
+    },
+    flipped: {
+      type:  Boolean,
+      default: () => false,
+    }
   },
+
   data() {
     return {
-      imgUrl: "/" + this.animal.image + ".png"
+      imgUrl: "/" + this.card.image + ".png"
     };
   },
   methods: {
-    flip($event) {
-      $event.target.classList.toggle("flipped");
-      this.$emit("flipped");
-    }
+    tap() {
+      this.$emit("tapped", this.card.id);
+    },
+  },
+  computed: {
+    cardClasses() {
+      return  {
+        'card': true,
+        'card--flipped': this.flipped,
+      };
+    },
   }
 };
 </script>

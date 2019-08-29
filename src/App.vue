@@ -2,14 +2,12 @@
   <div id="app">
     <div class="cards">
 
-<!-- <p  -->
-<!-- v-for="animal in theCards">{{animal.name}}</p> -->
        <Card 
-        v-for="animal in theCards" 
-        :key="animal.id"
-        :id="animal.id" 
-        :animal="animal" 
-        @card-flipped="cardFlipped" /> 
+        v-for="card in theCards" 
+        :key="card.id"
+        :card="card" 
+        @tapped="cardTapped"
+        /> 
 
     </div>
   </div>
@@ -25,8 +23,9 @@ const animals = ["elephant", "lion", "fox", "tiger", "rabbit", "owl"];
 let cards = [];
 
 animals.forEach((animal, index) => {
-  const animalCard = {
-    id: `${animal}-${index}`,
+
+    const animalCard = {
+    id: `${animal}-a`,
     name: animal,
     type: animal,
     image: animal,
@@ -34,24 +33,19 @@ animals.forEach((animal, index) => {
     // flipCount: 0,
   };
 
-// Do this twice.
-  cards.push(animalCard);
-  animalCard.id = `${animal}-${index + 1}`;
-  cards.push(animalCard);
+  // first copy 
+  const cardA = animalCard; 
+  cards.push(cardA);
+  // second copy
+  const cardB = {...animalCard};
+  cardB.id = `${animal}-b`;
+  cards.push(cardB);
 });
 
-  // console.log('cards', cards);
+  console.log('cards', cards);
 
-// function shuffle(a) {
-//   for (let i = a.length - 1; i > 0; i--) {
-//     const j = Math.floor(Math.random() * (i + 1));
-//     [a[i], a[j]] = [a[j], a[i]];
-//   }
-//   return a;
-// }
 
-// const dups = animals.concat(animals);
-// const dupsShuffled = shuffle(dups);
+// this.shuffle(cards);
 
 export default {
   name: "app",
@@ -62,47 +56,34 @@ export default {
     return {
       flippedCard: null,
       totalFlips: 0,
+      // theCards: this.shuffle(cards),
       theCards: cards,
+
     }
   },
 
-// methods: {
-//   cardFlipped(card) {
-//     if (!flippedCard) {
-//       this.flippedCard = card;
-//       this.clickedCard = null;
-//       return;
-//     }
-//     if (flippedCard && !clickedCard) {
-//       this.clickedCard = card; 
-//     }
-
-
-//     if (this.flippedCard.type === this.clickedCard.type) {
-//       this.flippedCard = null;
-//       this.clickedCard = null;
-//       this.totalFlips++;
-//       this.cards.forEach((animal) => {
-//         if (animal.type === card.type) {
-//           animal.answered = true;
-//         }
-//       })
-//     } else {
-//       this.flippedCard = null;
-//       this.clickedCard = null;
-//       this.totalFlips++;
-//     }
-//   }
-// }
+  methods: {
+    shuffle(a) {
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    },
+    cardTapped(tappedCardID) {
+      console.log('card tapped', tappedCardID);
+    },
+  }
 };
 
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 body {
   padding: 0;
   margin: 0;
 }
+
 #app {
   background: #eee;
   margin: 0;
@@ -114,6 +95,8 @@ body {
   padding: 0;
   display: grid;
   grid-gap: 20px;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  // width: 100vw;
+  height: 100vh;
 }
 </style>

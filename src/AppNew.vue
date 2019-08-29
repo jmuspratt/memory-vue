@@ -19,3 +19,32 @@ animals.forEach((animal, index) => {
 
   cards.push(animalCard);
 });
+
+
+// old ?
+//   cardFlipped(card) {
+//     if (!flippedCard) {
+//       this.flippedCard = card;
+//       this.clickedCard = null;
+//       return;
+//     }
+//     if (flippedCard && !clickedCard) {
+//       this.clickedCard = card; 
+//     }
+
+
+//     if (this.flippedCard.type === this.clickedCard.type) {
+//       this.flippedCard = null;
+//       this.clickedCard = null;
+//       this.totalFlips++;
+//       this.cards.forEach((animal) => {
+//         if (animal.type === card.type) {
+//           animal.answered = true;
+//         }
+//       })
+//     } else {
+//       this.flippedCard = null;
+//       this.clickedCard = null;
+//       this.totalFlips++;
+//     }
+//   }
