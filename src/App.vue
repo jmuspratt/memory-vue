@@ -1,67 +1,74 @@
 <template>
   <div id="app">
-    <div class="cards">
-
-       <Card 
-        v-for="card in theCards" 
+    <p>
+      {{ flippedCount }}
+    </p><div class="cards">
+      <Card
+        v-for="card in theCards"
         :key="card.id"
-        :card="card" 
+        :card="card"
         @tapped="cardTapped"
-        /> 
-
+      />
     </div>
   </div>
 </template>
 
 <script>
- /* eslint-disable */
-import Card from "./components/Card.vue";
+import Card from './components/Card.vue';
 
-const animals = ["elephant", "lion", "fox", "tiger", "rabbit", "owl"];
-  console.log('animals', animals);
+const animals = ['elephant', 'lion', 'fox', 'tiger', 'rabbit', 'owl'];
 
-let cards = [];
+const cards = [];
 
-animals.forEach((animal, index) => {
+animals.forEach(animal => {
 
-    const animalCard = {
+  const animalCard = {
     id: `${animal}-a`,
     name: animal,
+    flipped: false,
     type: animal,
     image: animal,
     answered: false,
     // flipCount: 0,
   };
 
-  // first copy 
-  const cardA = animalCard; 
+  // first copy
+  const cardA = animalCard;
   cards.push(cardA);
   // second copy
-  const cardB = {...animalCard};
+  const cardB = { ...animalCard };
   cardB.id = `${animal}-b`;
   cards.push(cardB);
 });
 
-  console.log('cards', cards);
 
 
 // this.shuffle(cards);
 
 export default {
-  name: "app",
+  name: 'App',
   components: {
-    Card
+    Card,
   },
   data() {
     return {
-      flippedCard: null,
+      flippedCard: [],
       totalFlips: 0,
       // theCards: this.shuffle(cards),
       theCards: cards,
-
-    }
+    };
   },
-
+  computed: {
+    flippedCount() {
+      let count = 0;
+      this.theCards.forEach(obj => {
+        if (obj.flipped) {
+          count++;
+        }
+      });
+      return count;
+    },
+  },
   methods: {
     shuffle(a) {
       for (let i = a.length - 1; i > 0; i--) {
@@ -70,10 +77,23 @@ export default {
       }
       return a;
     },
+
     cardTapped(tappedCardID) {
+      // eslint-disable-next-line
       console.log('card tapped', tappedCardID);
+      this.handleTap(tappedCardID);
     },
-  }
+
+    handleTap(cardID) {
+      // eslint-disable-next-line
+      console.log('handling tap on ', cardID);
+      // find it
+      // const tappedCard = this.theCards.find(obj => obj.id === cardID);
+      const newCards = this.theCards.map(card => card.id === cardID ? { ...card, flipped: !card.flipped } : card );
+      // update cards
+      this.theCards = newCards;
+    },
+  },
 };
 
 </script>

@@ -1,47 +1,46 @@
 <template>
   <div :class="cardClasses" @click="tap">
     <div class="card__inner">
-      <div class="card__front">{{card.id}}</div>
-      <div class="card__back" :style="`background-image: url(${imgUrl})`">
+      <div class="card__front">
+        {{ card.id }}
       </div>
+      <div :style="`background-image: url(${imgUrl})`" class="card__back" />
     </div>
   </div>
 </template>
 
 <script>
- /* eslint-disable */
 
 export default {
-  name: "Card",
+  name: 'Card',
   props: {
-    card: { 
+    card: {
       type: Object,
-      default: ()=> {},
+      default: () => {},
     },
-    flipped: {
-      type:  Boolean,
-      default: () => false,
-    }
+
   },
 
   data() {
     return {
-      imgUrl: "/" + this.card.image + ".png"
+      imgUrl: `/${ this.card.image  }.png`,
     };
-  },
-  methods: {
-    tap() {
-      this.$emit("tapped", this.card.id);
-    },
   },
   computed: {
     cardClasses() {
       return  {
         'card': true,
-        'card--flipped': this.flipped,
+        'card--flipped': this.card.flipped,
       };
     },
-  }
+  },
+  methods: {
+    tap() {
+      // eslint-disable-next-line
+      console.log('tapped', this.card.id);
+      this.$emit('tapped', this.card.id);
+    },
+  },
 };
 </script>
 
@@ -57,7 +56,7 @@ export default {
   // overflow: hidden;
 }
 
-.card.flipped .card__inner {
+.card--flipped .card__inner {
   transform: rotateY(180deg);
 }
 
