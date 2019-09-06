@@ -1,8 +1,18 @@
 <template>
   <div id="app">
     <p>
-      {{ flippedCount }}
-    </p><div class="cards">
+      turnCount: {{ turnCount }}
+    </p>
+    <p>
+      flips this turn: {{ flipsThisTurn }}
+    </p>
+    <p>
+      flipped count: {{ flippedCount }}
+    </p>
+    <p>
+      match count: {{ matchCount }}
+    </p>
+    <div class="cards">
       <Card
         v-for="card in theCards"
         :key="card.id"
@@ -25,11 +35,11 @@ animals.forEach(animal => {
   const animalCard = {
     id: `${animal}-a`,
     name: animal,
+    matchKey: animal,
     flipped: false,
     type: animal,
     image: animal,
     answered: false,
-    // flipCount: 0,
   };
 
   // first copy
@@ -52,10 +62,13 @@ export default {
   },
   data() {
     return {
-      flippedCard: [],
       totalFlips: 0,
       // theCards: this.shuffle(cards),
       theCards: cards,
+      flipsThisTurn: 0,
+      turnCount: 0,
+      firstFlipID: null,
+      firstFlipMatchKey: null,
     };
   },
   computed: {
@@ -68,8 +81,23 @@ export default {
       });
       return count;
     },
+    matchCount() {
+      switch (this.flipsThisTurn) {
+        case 1:
+          return (this.flippedCount - 1) / 2;
+        case 2:
+          return this.flippedCount / 2;
+        default:
+          return this.flippedCount / 2 ;
+      }
+    },
   },
   methods: {
+    incrementFlipsThisTurn() {
+      console.error('incrementing');
+
+      this.flipsThisTurn ++;
+    },
     shuffle(a) {
       for (let i = a.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -78,21 +106,62 @@ export default {
       return a;
     },
 
-    cardTapped(tappedCardID) {
+    cardTapped(cardID) {
       // eslint-disable-next-line
-      console.log('card tapped', tappedCardID);
-      this.handleTap(tappedCardID);
-    },
+      console.error('handling tap on ', cardID);
+      // find it a
+      const tappedCard = this.theCards.find(obj => obj.id === cardID);
+      console.error('tapped card is ', tappedCard.name);
 
-    handleTap(cardID) {
-      // eslint-disable-next-line
-      console.log('handling tap on ', cardID);
-      // find it
-      // const tappedCard = this.theCards.find(obj => obj.id === cardID);
+      if (tappedCard.flipped) {
+        console.error(tappedCard.name, ' is already flipped ');
+        return;
+      }
+
+
+      this.incrementFlipsThisTurn();
+
+      if (this.flipsThisTurn === 1) {
+        console.error('first turn ');
+        // store ID
+        this.firstFlipID = cardID;
+        this.firstFlipMatchKey = tappedCard.matchKey;
+
+        console.error('first card MATCH KEY IS', this.firstFlipMatchKey);
+        // flip the card
+        this.flipCard(cardID);
+
+      }
+      if (this.flipsThisTurn === 2) {
+        console.error('second turn ');
+        this.flipCard(cardID);
+
+        // check match
+        if (tappedCard.matchKey === this.firstFlipMatchKey) {
+          console.error('match!');
+
+          setTimeout(() => {
+            this.flipsThisTurn = 0;
+            this.turnCount ++;
+          }, 1000);
+        } else {
+          // not a match
+          setTimeout(() => {
+            // Unflip this and the first
+            this.flipCard(cardID);
+            this.flipCard(this.firstFlipID);
+            this.flipsThisTurn = 0;
+            this.turnCount ++;
+          }, 1000);
+        }
+      }
+    },
+    flipCard(cardID) {
       const newCards = this.theCards.map(card => card.id === cardID ? { ...card, flipped: !card.flipped } : card );
       // update cards
       this.theCards = newCards;
     },
+
   },
 };
 
