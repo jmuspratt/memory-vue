@@ -1,8 +1,6 @@
 <template>
   <div id="app">
-    <p>
-      turnCount: {{ turnCount }} |  flips this turn: {{ flipsThisTurn }} | match count: {{ matchCount }}
-    </p>
+    <ScoreBoard :score="score" />
     <div class="cards">
       <Card
         v-for="card in theCards"
@@ -16,6 +14,7 @@
 
 <script>
 import Card from './components/Card.vue';
+import ScoreBoard from './components/ScoreBoard.vue';
 
 const animals = ['elephant', 'lion', 'fox', 'tiger', 'rabbit', 'owl'];
 
@@ -54,6 +53,7 @@ export default {
   name: 'App',
   components: {
     Card,
+    ScoreBoard,
   },
   data() {
     return {
@@ -64,6 +64,7 @@ export default {
       turnCount: 0,
       firstFlipID: null,
       firstFlipMatchKey: null,
+      score: [],
     };
   },
   computed: {
@@ -122,15 +123,22 @@ export default {
           // update the 2 cards 'matched' prop
           const newCards = this.theCards.map(card => ([tappedCard.id, this.firstFlipID].includes(card.id)) ? { ...card, matched: true } : card );
           this.theCards = newCards;
+
+          // update score
+          this.score.push('match');
+
         } else {
           // Not a match
           // Turn both cards back face down
           this.flipCard(tappedCard.id);
           this.flipCard(this.firstFlipID);
           this.flipsThisTurn = 0;
+          // update the score
+          this.score.push('miss');
         }
         // increment turn count
         this.turnCount ++;
+
       }, 1000);
     },
 
@@ -156,7 +164,7 @@ body {
 
 #app {
   margin: 0;
-  padding: 80px;
+  padding: 50px;
 }
 .cards {
   list-style: none;

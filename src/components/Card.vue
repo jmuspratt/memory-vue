@@ -100,7 +100,7 @@ export default {
 }
 
 .card__front {
-  background: royalblue;
+  background: rgb(30, 39, 92);
   z-index: 2;
 }
 
