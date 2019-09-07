@@ -1,10 +1,12 @@
 <template>
   <div :class="cardClasses" @click="tap">
     <div class="card__inner">
-      <div class="card__front">
-        {{ card.id }}
-      </div>
-      <div :style="`background-image: url(${imgUrl})`" class="card__back" />
+      <div class="card__front" />
+      <div
+        :style="`background-image: url(${imgUrl})`"
+        :data-matchkey="card.matchKey"
+        class="card__back"
+      />
     </div>
   </div>
 </template>
@@ -31,6 +33,7 @@ export default {
       return  {
         'card': true,
         'card--flipped': this.card.flipped,
+        'card--matched': this.card.matched,
       };
     },
   },
@@ -51,15 +54,24 @@ export default {
 .card {
   max-width: 100%;
   display: block;
-  background-color: #efefef;
   perspective: 1000px;
   // overflow: hidden;
+}
+
+.card__inner {
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+  transition: 0.6s;
+  transform-style: preserve-3d;
+  position: relative;
 }
 
 .card--flipped .card__inner {
   transform: rotateY(180deg);
 }
 
+.card--matched .card__inner {
+  opacity: 0.4;
+}
 
 .card__inner,
 .card__front,
@@ -70,12 +82,6 @@ export default {
 
 .card * {
   pointer-events: none;
-}
-
-.card__inner {
-  transition: 0.6s;
-  transform-style: preserve-3d;
-  position: relative;
 }
 
 .card__front,

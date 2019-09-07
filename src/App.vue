@@ -1,16 +1,7 @@
 <template>
   <div id="app">
     <p>
-      turnCount: {{ turnCount }}
-    </p>
-    <p>
-      flips this turn: {{ flipsThisTurn }}
-    </p>
-    <p>
-      flipped count: {{ flippedCount }}
-    </p>
-    <p>
-      match count: {{ matchCount }}
+      turnCount: {{ turnCount }} |  flips this turn: {{ flipsThisTurn }} | match count: {{ matchCount }}
     </p>
     <div class="cards">
       <Card
@@ -33,13 +24,11 @@ const cards = [];
 animals.forEach(animal => {
 
   const animalCard = {
-    id: `${animal}-a`,
-    name: animal,
     matchKey: animal,
     flipped: false,
-    type: animal,
+    id: `${animal}-a`,
     image: animal,
-    answered: false,
+    matched: false,
   };
 
   // first copy
@@ -51,9 +40,15 @@ animals.forEach(animal => {
   cards.push(cardB);
 });
 
+function shuffle(a) {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
-
-// this.shuffle(cards);
+shuffle(cards);
 
 export default {
   name: 'App',
@@ -72,92 +67,76 @@ export default {
     };
   },
   computed: {
-    flippedCount() {
-      let count = 0;
-      this.theCards.forEach(obj => {
-        if (obj.flipped) {
-          count++;
-        }
-      });
-      return count;
-    },
+
     matchCount() {
-      switch (this.flipsThisTurn) {
-        case 1:
-          return (this.flippedCount - 1) / 2;
-        case 2:
-          return this.flippedCount / 2;
-        default:
-          return this.flippedCount / 2 ;
-      }
+      return this.theCards.filter(card => card.matched === true).length / 2;
     },
   },
   methods: {
     incrementFlipsThisTurn() {
-      console.error('incrementing');
-
       this.flipsThisTurn ++;
     },
-    shuffle(a) {
-      for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
-      }
-      return a;
-    },
 
-    cardTapped(cardID) {
-      // eslint-disable-next-line
-      console.error('handling tap on ', cardID);
-      // find it a
-      const tappedCard = this.theCards.find(obj => obj.id === cardID);
-      console.error('tapped card is ', tappedCard.name);
+    cardTapped(tappedCardID) {
+      // store a copy of the card data as tappedCard
+      const tappedCard = this.theCards.find(obj => obj.id === tappedCardID);
 
       if (tappedCard.flipped) {
-        console.error(tappedCard.name, ' is already flipped ');
         return;
       }
 
-
+      // Increment flip count for this turn
       this.incrementFlipsThisTurn();
 
       if (this.flipsThisTurn === 1) {
-        console.error('first turn ');
-        // store ID
-        this.firstFlipID = cardID;
-        this.firstFlipMatchKey = tappedCard.matchKey;
-
-        console.error('first card MATCH KEY IS', this.firstFlipMatchKey);
-        // flip the card
-        this.flipCard(cardID);
+        this.runTurn1(tappedCard);
 
       }
       if (this.flipsThisTurn === 2) {
-        console.error('second turn ');
-        this.flipCard(cardID);
-
-        // check match
-        if (tappedCard.matchKey === this.firstFlipMatchKey) {
-          console.error('match!');
-
-          setTimeout(() => {
-            this.flipsThisTurn = 0;
-            this.turnCount ++;
-          }, 1000);
-        } else {
-          // not a match
-          setTimeout(() => {
-            // Unflip this and the first
-            this.flipCard(cardID);
-            this.flipCard(this.firstFlipID);
-            this.flipsThisTurn = 0;
-            this.turnCount ++;
-          }, 1000);
-        }
+        this.runTurn2(tappedCard);
       }
     },
-    flipCard(cardID) {
-      const newCards = this.theCards.map(card => card.id === cardID ? { ...card, flipped: !card.flipped } : card );
+
+    runTurn1(tappedCard) {
+      // flip the card face up
+      this.flipCard(tappedCard.id);
+
+      // store ID and Matchkey of first flipped card
+      this.firstFlipID = tappedCard.id;
+      this.firstFlipMatchKey = tappedCard.matchKey;
+    },
+
+    runTurn2(tappedCard) {
+      // flip the card face up
+      this.flipCard(tappedCard.id);
+      this.checkMatch(tappedCard);
+    },
+
+    checkMatch(tappedCard) {
+      // check match
+      setTimeout(() => {
+        if (tappedCard.matchKey === this.firstFlipMatchKey) {
+          // Match!
+          // reset flips counter
+          this.flipsThisTurn = 0;
+          // update the 2 cards 'matched' prop
+          const newCards = this.theCards.map(card => ([tappedCard.id, this.firstFlipID].includes(card.id)) ? { ...card, matched: true } : card );
+          this.theCards = newCards;
+        } else {
+          // Not a match
+          // Turn both cards back face down
+          this.flipCard(tappedCard.id);
+          this.flipCard(this.firstFlipID);
+          this.flipsThisTurn = 0;
+        }
+        // increment turn count
+        this.turnCount ++;
+      }, 1000);
+    },
+
+
+    flipCard(tappedCardID) {
+      const newCards = this.theCards.map(card => card.id === tappedCardID ? { ...card, flipped: !card.flipped } : card );
       // update cards
       this.theCards = newCards;
     },
@@ -171,12 +150,13 @@ export default {
 body {
   padding: 0;
   margin: 0;
+  font-family: arial, helvetica, sans-serif;
+  font-size: 15px;
 }
 
 #app {
-  background: #eee;
   margin: 0;
-  padding: 40px;
+  padding: 80px;
 }
 .cards {
   list-style: none;
@@ -184,8 +164,8 @@ body {
   padding: 0;
   display: grid;
   grid-gap: 20px;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   // width: 100vw;
-  height: 100vh;
+  // height: 100vh;
 }
 </style>
