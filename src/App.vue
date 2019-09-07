@@ -75,7 +75,6 @@ export default {
   },
 
   mounted() {
-    console.error('serviceworker', navigator.serviceWorker);
     if (navigator.serviceWorker && !navigator.serviceWorker.controller) { navigator.serviceWorker.register('/serviceworker.js'); }
   },
   methods: {
