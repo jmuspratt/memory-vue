@@ -73,6 +73,11 @@ export default {
       return this.theCards.filter(card => card.matched === true).length / 2;
     },
   },
+
+  mounted() {
+    console.error('serviceworker', navigator.serviceWorker);
+    if (navigator.serviceWorker && !navigator.serviceWorker.controller) { navigator.serviceWorker.register('/serviceworker.js'); }
+  },
   methods: {
     incrementFlipsThisTurn() {
       this.flipsThisTurn ++;

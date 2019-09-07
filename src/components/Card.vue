@@ -25,7 +25,7 @@ export default {
 
   data() {
     return {
-      imgUrl: `/${ this.card.image  }.png`,
+      imgUrl: `/images/${ this.card.image  }.png`,
     };
   },
   computed: {

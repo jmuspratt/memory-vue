@@ -1,6 +1,6 @@
 <template>
   <div class="scoreboard">
-    <span class="text">{{ matchCount }} / {{ turnCount }}</span> <span v-for="turn in score" :class="`turn turn--${turn}`" />
+    <span class="text">{{ turnCount }}</span> <span v-for="turn in score" :class="`turn turn--${turn}`" />
   </div>
 </template>
 
@@ -58,6 +58,6 @@ export default {
 }
 
 .turn--match {
-  background: rgb(70, 208, 243);
+  background: blue;
 }
 </style>
