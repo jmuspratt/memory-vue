@@ -1,12 +1,17 @@
 <template>
-  <div :class="cardClasses" @click="tap">
+  <div
+    :class="cardClasses"
+    @click="tap"
+    :style="cardTranslate"
+  >
     <div class="card__inner">
       <div class="card__front" />
       <div
-        :style="`background-image: url(${imgUrl})`"
         :data-matchkey="card.matchKey"
         class="card__back"
-      />
+      >
+        <img :src="`${card.imgUrl}`" class="card__img">
+      </div>
     </div>
   </div>
 </template>
@@ -25,10 +30,27 @@ export default {
 
   data() {
     return {
-      imgUrl: `/images/${ this.card.image  }.png`,
+      gravity: {
+        x: 0,
+        y: 0,
+      },
+      delta: [0, 0],
+      pos: {
+        x: 0,
+        y: 0,
+      },
     };
   },
+
+
   computed: {
+
+    cardTranslate() {
+
+      return null;
+      // return `transform: translate(${this.pos.x}px, ${this.posY}px);`;
+    },
+
     cardClasses() {
       return  {
         'card': true,
@@ -37,11 +59,32 @@ export default {
       };
     },
   },
+
+  created() {
+    window.addEventListener( 'deviceorientation', this.onDeviceTilt, false );
+
+  },
   methods: {
+    onDeviceTilt(event) {
+      // const rand = this.randomFromRange(30, 50);
+      if ( event.beta ) {
+        this.gravity.x = Math.sin( event.gamma * Math.PI / 180 );
+        this.gravity.y = Math.sin( ( Math.PI / 4 ) + event.beta * Math.PI / 180 );
+
+        this.posX = this.gravity.x * 8 + this.delta[0] ;
+        this.posY = this.gravity.y * 8 + this.delta[1] ;
+
+        // update delta with new positions
+        this.delta[0] = this.posX;
+        this.delta[1] = this.posY;
+      }
+    },
     tap() {
       // eslint-disable-next-line
-      console.log('tapped', this.card.id);
       this.$emit('tapped', this.card.id);
+    },
+    randomFromRange(min, max) {
+      return Math.floor(Math.random() * (max - min + 1) + min);
     },
   },
 };
@@ -51,11 +94,21 @@ export default {
 * {
   box-sizing: border-box;
 }
+
+.text {
+  color: orange;
+}
 .card {
+  width: auto;
   max-width: 100%;
   display: block;
   perspective: 1000px;
   // overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
 }
 
 .card__inner {
@@ -70,14 +123,28 @@ export default {
 }
 
 .card--matched .card__inner {
-  opacity: 0.4;
+  opacity: 0.2;
 }
 
 .card__inner,
 .card__front,
 .card__back {
-  border-radius: 15px;
-  min-height: 200px;
+  border-radius: 5px;
+  width: 100%;
+  height: 100%;
+}
+
+.card__back {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
+.card__img {
+  display: block;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
 }
 
 .card * {
@@ -100,7 +167,7 @@ export default {
 }
 
 .card__front {
-  background: rgb(30, 39, 92);
+  background: linear-gradient(45deg, #222, rgb(200, 39, 92));
   z-index: 2;
 }
 

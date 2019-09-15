@@ -1,6 +1,16 @@
 <template>
   <div class="scoreboard">
-    <span class="text">{{ turnCount }}</span> <span v-for="turn in score" :class="`turn turn--${turn}`" />
+    <div class="scoreboard__board">
+      <span class="text">{{ turnCount }}</span>
+      <div>
+        <span v-for="turn in score" :class="`turn turn--${turn}`" />
+      </div>
+    </div>
+    <div class="scoreboard__reset">
+      <Button @click="reset">
+        Reset
+      </Button>
+    </div>
   </div>
 </template>
 
@@ -23,6 +33,12 @@ export default {
       return this.score.length;
     },
   },
+
+  methods: {
+    reset() {
+      this.$emit('reset');
+    },
+  },
 };
 
 </script>
@@ -34,14 +50,36 @@ export default {
   margin: 0;
   padding: 0;
 }
+
 .text {
-  color: black;
+  color: #fff;
   display: inline-block;
   font: bold 12px / 1.4 arial;
   margin-right: 20px;
 }
+
 .scoreboard {
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
   min-height: 40px;
+  position: fixed;
+  padding: 15px 20px;
+  top:0;
+  left:0;
+  width: 100%;
+
+  @media (min-width: 700px) {
+    padding: 15px 50px;
+  }
+}
+
+.scoreboard__reset button {
+  appearance: none;
+  background: transparent;
+  border: 1px solid white;
+  color: white;
+  padding: 4px 12px;
 }
 
 .turn {
@@ -58,6 +96,6 @@ export default {
 }
 
 .turn--match {
-  background: blue;
+  background: rgb(30,255,255);
 }
 </style>

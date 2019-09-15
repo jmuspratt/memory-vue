@@ -1,13 +1,19 @@
 <template>
-  <div id="app">
-    <ScoreBoard :score="score" />
-    <div class="cards">
+  <div id="app" class="app">
+    <ScoreBoard
+      :score="score"
+      @reset="reset"
+    />
+    <div
+      class="grid"
+    >
       <Card
         v-for="card in theCards"
         :key="card.id"
         :card="card"
         @tapped="cardTapped"
       />
+      </scoreboard>
     </div>
   </div>
 </template>
@@ -16,27 +22,39 @@
 import Card from './components/Card.vue';
 import ScoreBoard from './components/ScoreBoard.vue';
 
-const animals = ['elephant', 'lion', 'fox', 'tiger', 'rabbit', 'owl'];
+// const animals = ['elephant', 'lion', 'fox', 'tiger', 'rabbit', 'owl'];
+
+const shapes = [
+  'triangle',
+  'star',
+  'rhombus',
+  'square',
+  'pentagon',
+  'hexagon',
+  'oval',
+  'circle'];
 
 const cards = [];
 
-animals.forEach(animal => {
+shapes.forEach(item => {
 
-  const animalCard = {
-    matchKey: animal,
+
+  const card = {
+    matchKey: item,
     flipped: false,
-    id: `${animal}-a`,
-    image: animal,
+    id: `${item}-a`,
+    imgUrl: `/images/shapes/${item}.png`,
     matched: false,
   };
 
   // first copy
-  const cardA = animalCard;
+  const cardA = card;
   cards.push(cardA);
   // second copy
-  const cardB = { ...animalCard };
-  cardB.id = `${animal}-b`;
+  const cardB = { ...card };
+  cardB.id = `${item}-b`;
   cards.push(cardB);
+
 });
 
 function shuffle(a) {
@@ -49,6 +67,19 @@ function shuffle(a) {
 
 shuffle(cards);
 
+function initState() {
+  return {
+    totalFlips: 0,
+    // theCards: this.shuffle(cards),
+    theCards: cards,
+    flipsThisTurn: 0,
+    turnCount: 0,
+    firstFlipID: null,
+    firstFlipMatchKey: null,
+    score: [],
+  };
+}
+
 export default {
   name: 'App',
   components: {
@@ -56,16 +87,7 @@ export default {
     ScoreBoard,
   },
   data() {
-    return {
-      totalFlips: 0,
-      // theCards: this.shuffle(cards),
-      theCards: cards,
-      flipsThisTurn: 0,
-      turnCount: 0,
-      firstFlipID: null,
-      firstFlipMatchKey: null,
-      score: [],
-    };
+    return initState();
   },
   computed: {
 
@@ -152,7 +174,9 @@ export default {
       // update cards
       this.theCards = newCards;
     },
-
+    reset() {
+      Object.assign(this.$data, initState());
+    },
   },
 };
 
@@ -160,24 +184,40 @@ export default {
 
 <style lang="scss">
 body {
+  background: #222;
+  color: #fff;
   padding: 0;
   margin: 0;
   font-family: arial, helvetica, sans-serif;
   font-size: 15px;
 }
 
-#app {
+
+
+.app {
   margin: 0;
-  padding: 50px;
+  padding: 20px;
+
+  @media (min-width: 700px) {
+    padding: 50px;
+  }
 }
-.cards {
+
+.grid {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
   grid-gap: 20px;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  // width: 100vw;
-  // height: 100vh;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  width: calc(100vw -80px);
+  height: calc(100vh - 100px);
 }
+
+.grid__cell {
+  // width: 100%;
+  // height: 100%;
+}
+
+
 </style>
