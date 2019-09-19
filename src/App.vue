@@ -4,7 +4,7 @@
       :score="score"
       @reset="reset"
     />
-    <div
+    <section
       class="grid"
     >
       <Card
@@ -13,8 +13,7 @@
         :card="card"
         @tapped="cardTapped"
       />
-      </scoreboard>
-    </div>
+    </section>
   </div>
 </template>
 
