@@ -41,7 +41,7 @@ shapes.forEach(item => {
   const card = {
     matchKey: item,
     flipped: false,
-    id: `${item}-a`,
+    id: `${item}_a`,
     imgUrl: `/images/shapes/${item}.png`,
     matched: false,
   };
@@ -51,7 +51,7 @@ shapes.forEach(item => {
   cards.push(cardA);
   // second copy
   const cardB = { ...card };
-  cardB.id = `${item}-b`;
+  cardB.id = `${item}_b`;
   cards.push(cardB);
 
 });

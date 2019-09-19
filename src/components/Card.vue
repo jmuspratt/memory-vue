@@ -6,34 +6,38 @@
     :style="cardTranslate"
   >
     <svg
-      viewBox="0 0 120 120"
+      width="200"
+      height="200"
+      viewBox="0 0 200 200"
     >
       <defs>
-        <mask id="mask">
+        <mask
+          :id="`mask_${card.id}`"
+        >
           <rect
             ref="maskRect"
-            width="240"
-            height="240"
+            width="100%"
+            height="100%"
             fill="gray"
           />
           <circle
-            ref="maskCircle"
-            r="80"
-            cx="120"
-            cy="120"
+            :ref="`maskCircle_${card.id}`"
+            cx="100"
+            cy="100"
+            r="50"
             fill="black"
           />
         </mask>
       </defs>
     </svg>
     <div class="card__inner">
-      <svg id="" class="card__cover">
+      <svg class="card__cover" viewBox="0 0 200 200">
         <circle
           ref="circle"
-          cx="60"
-          cy="60"
-          r="120"
-          mask="url(#mask)"
+          :mask="`url(#mask_${card.id})`"
+          cx="100"
+          cy="100"
+          r="100"
         />
       </svg>
       <div
@@ -96,8 +100,8 @@ export default {
   watch: {
     flipped() {
 
-      const el = this.$refs.maskCircle;
-      const newRadius = this.flipped ? 0 : 120;
+      const el = this.$refs[`maskCircle_${this.card.id}`];
+      const newRadius = this.flipped ? 100 : 50;
 
       TweenMax.to(el, .375, {
         attr: {
@@ -128,6 +132,7 @@ export default {
     },
     tap() {
       // eslint-disable-next-line
+      console.log('tapped!!')
       this.$emit('tapped', this.card.id);
     },
     randomFromRange(min, max) {
@@ -142,8 +147,9 @@ export default {
   box-sizing: border-box;
 }
 
+
 .card {
-  --card-size: 240px;
+  --card-size: 200px;
 }
 
 .card {
@@ -156,15 +162,41 @@ export default {
 }
 
 
+.card__inner {
+
+}
+
+.card__content,
 .card__cover {
   position: absolute;
-  width: var(--card-size);
   left: 0;
-  height: var(--card-size);
   top: 0;
+  width: 200px;
+  height: 200px;
+}
+
+
+.card__inner * {
+  pointer-events: none;
+}
+
+.card__cover {
+  // position: absolute;
+  width: var(--card-size);
+  // left: 0;
+  height: var(--card-size);
+  // top: 0;
   z-index: 2;
+
+  svg {
+    display: block;
+    max-width: 100%;
+  }
   circle {
+    width: 200px;
+    height: 200px;
     mask-position: 0% 0%;
+    // mask-size: 240px 240px;
     // transform-origin: 50% 50%;
     // transform: translate(120px, 120px);
     fill: blue;
