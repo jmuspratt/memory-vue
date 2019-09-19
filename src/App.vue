@@ -13,7 +13,6 @@
         :card="card"
         @tapped="cardTapped"
       />
-      </scoreboard>
     </div>
   </div>
 </template>

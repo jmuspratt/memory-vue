@@ -1,14 +1,43 @@
 <template>
   <div
+    ref="card"
     :class="cardClasses"
     @click="tap"
     :style="cardTranslate"
   >
+    <svg
+      viewBox="0 0 120 120"
+    >
+      <defs>
+        <mask id="mask">
+          <rect
+            ref="maskRect"
+            width="240"
+            height="240"
+            fill="gray"
+          />
+          <circle
+            ref="maskCircle"
+            r="80"
+            cx="120"
+            cy="120"
+            fill="black"
+          />
+        </mask>
+      </defs>
+    </svg>
     <div class="card__inner">
-      <div class="card__front" />
+      <svg id="" class="card__cover">
+        <circle
+          ref="circle"
+          cx="60"
+          cy="60"
+          r="120"
+          mask="url(#mask)"
+        />
+      </svg>
       <div
-        :data-matchkey="card.matchKey"
-        class="card__back"
+        class="card__content"
       >
         <img :src="`${card.imgUrl}`" class="card__img">
       </div>
@@ -17,6 +46,9 @@
 </template>
 
 <script>
+
+import { TweenMax } from 'gsap/all';
+// console.log('TCL: TweenMax', TweenMax);
 
 export default {
   name: 'Card',
@@ -41,12 +73,13 @@ export default {
       },
     };
   },
-
-
   computed: {
 
-    cardTranslate() {
+    flipped() {
+      return this.card.flipped;
+    },
 
+    cardTranslate() {
       return null;
       // return `transform: translate(${this.pos.x}px, ${this.posY}px);`;
     },
@@ -54,9 +87,23 @@ export default {
     cardClasses() {
       return  {
         'card': true,
-        'card--flipped': this.card.flipped,
+        // 'card--flipped': this.card.flipped,
         'card--matched': this.card.matched,
       };
+    },
+  },
+
+  watch: {
+    flipped() {
+
+      const el = this.$refs.maskCircle;
+      const newRadius = this.flipped ? 0 : 120;
+
+      TweenMax.to(el, .375, {
+        attr: {
+          r: newRadius,
+        },
+      });
     },
   },
 
@@ -95,84 +142,52 @@ export default {
   box-sizing: border-box;
 }
 
-.text {
-  color: orange;
-}
 .card {
-  width: auto;
-  max-width: 100%;
+  --card-size: 240px;
+}
+
+.card {
   display: block;
-  perspective: 1000px;
-  // overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-}
-
-.card__inner {
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
-  transition: 0.6s;
-  transform-style: preserve-3d;
+  // perspective: 1000px;
+  width: var(--card-size);
+  height: var(--card-size);
   position: relative;
+
 }
 
-.card--flipped .card__inner {
-  transform: rotateY(180deg);
+
+.card__cover {
+  position: absolute;
+  width: var(--card-size);
+  left: 0;
+  height: var(--card-size);
+  top: 0;
+  z-index: 2;
+  circle {
+    mask-position: 0% 0%;
+    // transform-origin: 50% 50%;
+    // transform: translate(120px, 120px);
+    fill: blue;
+  }
 }
 
-.card--matched .card__inner {
-  opacity: 0.2;
-}
 
-.card__inner,
-.card__front,
-.card__back {
-  border-radius: 5px;
-  width: 100%;
-  height: 100%;
-}
-
-.card__back {
-  align-items: center;
-  display: flex;
-  justify-content: center;
+.card__content {
+  height: (--card-size);
+  width: (--card-size);
 }
 
 .card__img {
+  position: absolute;
+  top: 25px;
+  left: 25px;
   display: block;
   height: auto;
   max-width: 100%;
-  max-height: 100%;
 }
 
-.card * {
-  pointer-events: none;
-}
-
-.card__front,
-.card__back {
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  position: absolute;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: 50% 50%;
-  background-color: #fff;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.card__front {
-  background: linear-gradient(45deg, #222, rgb(200, 39, 92));
-  z-index: 2;
-}
-
-.card__back {
-  transform: rotateY(180deg);
-}
+// .card * {
+//   pointer-events: none;
+// }
 
 </style>
