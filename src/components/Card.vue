@@ -2,7 +2,7 @@
   <div
     :class="cardClasses"
     @click="tap"
-    :style="cardTranslate"
+    :style="cardTransform"
   >
     <div class="card__inner">
       <div class="card__front" />
@@ -25,31 +25,24 @@ export default {
       type: Object,
       default: () => {},
     },
+    cardTransform: {
+      type: String,
+      default: () => '',
+    },
 
   },
 
   data() {
     return {
-      gravity: {
-        x: 0,
-        y: 0,
-      },
-      delta: [0, 0],
-      pos: {
-        x: 0,
-        y: 0,
+      orientation: {
+        alpha: 4,
+        beta: 0,
+        gamma: 0,
       },
     };
   },
 
-
   computed: {
-
-    cardTranslate() {
-
-      return null;
-      // return `transform: translate(${this.pos.x}px, ${this.posY}px);`;
-    },
 
     cardClasses() {
       return  {
@@ -62,22 +55,14 @@ export default {
 
   created() {
     window.addEventListener( 'deviceorientation', this.onDeviceTilt, false );
-
   },
   methods: {
     onDeviceTilt(event) {
       // const rand = this.randomFromRange(30, 50);
-      if ( event.beta ) {
-        this.gravity.x = Math.sin( event.gamma * Math.PI / 180 );
-        this.gravity.y = Math.sin( ( Math.PI / 4 ) + event.beta * Math.PI / 180 );
+      this.orientation.alpha = event.alpha;
+      this.orientation.beta = event.beta;
+      this.orientation.gamma = event.gamma;
 
-        this.posX = this.gravity.x * 8 + this.delta[0] ;
-        this.posY = this.gravity.y * 8 + this.delta[1] ;
-
-        // update delta with new positions
-        this.delta[0] = this.posX;
-        this.delta[1] = this.posY;
-      }
     },
     tap() {
       // eslint-disable-next-line

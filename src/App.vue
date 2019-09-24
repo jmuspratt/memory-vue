@@ -1,5 +1,14 @@
 <template>
   <div id="app" class="app">
+    <div class="toolbar">
+      <button @click="askMotionPermission" class="btn">
+        Enable motion
+      </button>
+      <button @click="reset" class="btn">
+        Reset game
+      </button>
+    </div>
+
     <ScoreBoard
       :score="score"
       @reset="reset"
@@ -11,6 +20,7 @@
         v-for="card in theCards"
         :key="card.id"
         :card="card"
+        :cardTransform="cardTransform"
         @tapped="cardTapped"
       />
     </section>
@@ -64,9 +74,11 @@ function shuffle(a) {
   return a;
 }
 
-shuffle(cards);
 
 function initState() {
+
+  shuffle(cards);
+
   return {
     totalFlips: 0,
     // theCards: this.shuffle(cards),
@@ -76,6 +88,7 @@ function initState() {
     firstFlipID: null,
     firstFlipMatchKey: null,
     score: [],
+    cardTransform: null,
   };
 }
 
@@ -85,11 +98,12 @@ export default {
     Card,
     ScoreBoard,
   },
+
   data() {
     return initState();
   },
-  computed: {
 
+  computed: {
     matchCount() {
       return this.theCards.filter(card => card.matched === true).length / 2;
     },
@@ -98,7 +112,29 @@ export default {
   mounted() {
     if (navigator.serviceWorker && !navigator.serviceWorker.controller) { navigator.serviceWorker.register('/serviceworker.js'); }
   },
+
+  created() {
+    // attempt to use acceleromater for iOS less than 13
+    window.addEventListener('deviceorientation', this.handleOrientation);
+  },
+
   methods: {
+    askMotionPermission() {
+      window.DeviceMotionEvent
+        .requestPermission()
+        .then(response => {
+          if (response === 'granted') {
+            window.addEventListener('deviceorientation', this.handleOrientation);
+          } else {
+            alert('OK, but you’re missing out...');
+          }
+        });
+    },
+
+    handleOrientation(event) {
+      this.cardTransform =  `transform: rotateZ(${event.alpha}deg) rotateY(${event.beta}deg) rotateX(${event.gamma}deg)`;
+    },
+
     incrementFlipsThisTurn() {
       this.flipsThisTurn ++;
     },
@@ -189,6 +225,30 @@ body {
   margin: 0;
   font-family: arial, helvetica, sans-serif;
   font-size: 15px;
+}
+
+.toolbar {
+  position: fixed;
+  right: 12px;
+  top: 15px;
+  z-index: 3;
+}
+
+.btn {
+  appearance: none;
+  background: transparent;
+  border: 2px solid white;
+  color: white;
+  font: 11px / 1 arial;
+  letter-spacing: 0.3px;
+  padding: 4px 12px;
+  height: 24px;
+  border-radius: 12px;
+}
+
+.btn:active {
+  color: black;
+  background-color: white;
 }
 
 

@@ -6,11 +6,6 @@
         <span v-for="turn in score" :class="`turn turn--${turn}`" />
       </div>
     </div>
-    <div class="scoreboard__reset">
-      <Button @click="reset">
-        Reset
-      </Button>
-    </div>
   </div>
 </template>
 
@@ -34,11 +29,7 @@ export default {
     },
   },
 
-  methods: {
-    reset() {
-      this.$emit('reset');
-    },
-  },
+
 };
 
 </script>
@@ -72,14 +63,6 @@ export default {
   @media (min-width: 700px) {
     padding: 15px 50px;
   }
-}
-
-.scoreboard__reset button {
-  appearance: none;
-  background: transparent;
-  border: 1px solid white;
-  color: white;
-  padding: 4px 12px;
 }
 
 .turn {
