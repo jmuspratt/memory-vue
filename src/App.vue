@@ -218,9 +218,10 @@ export default {
 </script>
 
 <style lang="scss">
+
 body {
-  background: #222;
-  color: #fff;
+  background: $c-gray-dark;
+  color: $c-red;
   padding: 0;
   margin: 0;
   font-family: arial, helvetica, sans-serif;
