@@ -79,6 +79,6 @@ export default {
 }
 
 .turn--match {
-  background: rgb(30,255,255);
+  background: rgb(255, 217, 5);
 }
 </style>

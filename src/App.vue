@@ -1,7 +1,11 @@
 <template>
   <div id="app" class="app">
     <div class="toolbar">
-      <button @click="askMotionPermission" class="btn">
+      <button
+        @click="askOrientDataPermission"
+        v-if="orientDataAvailable && !orientDataPermitted"
+        class="btn btn--motion-permission"
+      >
         Enable motion
       </button>
       <button @click="reset" class="btn">
@@ -89,6 +93,7 @@ function initState() {
     firstFlipMatchKey: null,
     score: [],
     cardTransform: null,
+    orientDataPermitted: false,
   };
 }
 
@@ -107,6 +112,9 @@ export default {
     matchCount() {
       return this.theCards.filter(card => card.matched === true).length / 2;
     },
+    orientDataAvailable() {
+      return window.DeviceOrientationEvent;
+    },
   },
 
   mounted() {
@@ -119,17 +127,24 @@ export default {
   },
 
   methods: {
-    askMotionPermission() {
-      window.DeviceMotionEvent
-        .requestPermission()
-        .then(response => {
-          if (response === 'granted') {
-            window.addEventListener('deviceorientation', this.handleOrientation);
-          } else {
-            alert('OK, but you’re missing out...');
-          }
-        });
+
+    askOrientDataPermission() {
+
+      if (this.orientDataAvailable) {
+
+        window.DeviceMotionEvent
+          .requestPermission()
+          .then(response => {
+            if (response === 'granted') {
+              window.addEventListener('deviceorientation', this.handleOrientation);
+              this.orientDataPermitted = true;
+            } else {
+              alert('OK, but you’re missing out...');
+            }
+          });
+      }
     },
+
 
     handleOrientation(event) {
       this.cardTransform =  `transform: rotateZ(${event.alpha}deg) rotateY(${event.beta}deg) rotateX(${event.gamma}deg)`;
@@ -228,6 +243,7 @@ body {
   font-size: 15px;
 }
 
+
 .toolbar {
   position: fixed;
   right: 12px;
@@ -235,24 +251,37 @@ body {
   z-index: 3;
 }
 
+@keyframes pulse {
+  from{
+    opacity: 1;
+
+  }
+  to {
+    opacity: 0.5;
+  }
+}
 .btn {
   appearance: none;
   background: transparent;
   border: 2px solid white;
-  color: white;
-  font: 11px / 1 arial;
-  letter-spacing: 0.3px;
-  padding: 4px 12px;
-  height: 24px;
   border-radius: 12px;
+  color: white;
+  cursor: pointer;
+  font: 11px / 1 arial;
+  height: 24px;
+  letter-spacing: 0.3px;
+  margin-left: 10px;
+  padding: 4px 12px;
+
+  &--motion-permission {
+    animation: pulse 1s ease-in-out alternate infinite;
+  }
 }
 
 .btn:active {
   color: black;
   background-color: white;
 }
-
-
 
 .app {
   margin: 0;

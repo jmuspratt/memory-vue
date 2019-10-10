@@ -1,5 +1,6 @@
 <template>
   <div
+    ref="card"
     :class="cardClasses"
     @click="tap"
     :style="cardTransform"
@@ -17,6 +18,7 @@
 </template>
 
 <script>
+
 
 export default {
   name: 'Card',
@@ -53,17 +55,10 @@ export default {
     },
   },
 
-  created() {
-    window.addEventListener( 'deviceorientation', this.onDeviceTilt, false );
-  },
-  methods: {
-    onDeviceTilt(event) {
-      // const rand = this.randomFromRange(30, 50);
-      this.orientation.alpha = event.alpha;
-      this.orientation.beta = event.beta;
-      this.orientation.gamma = event.gamma;
 
-    },
+
+  methods: {
+
     tap() {
       // eslint-disable-next-line
       this.$emit('tapped', this.card.id);
@@ -152,7 +147,7 @@ export default {
 }
 
 .card__front {
-  background: linear-gradient(45deg, #222, rgb(200, 39, 92));
+  background: linear-gradient(45deg, #222, rgb(0, 60, 100));
   z-index: 2;
 }
 
