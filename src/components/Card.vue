@@ -5,13 +5,19 @@
     @click="tap"
     :style="cardTransform"
   >
-    <div class="card__inner">
-      <div class="card__front" />
+    <div
+      class="card__inner2"
+    >
       <div
-        :data-matchkey="card.matchKey"
-        class="card__back"
+        class="card__inner"
       >
-        <img :src="`${card.imgUrl}`" class="card__img">
+        <div class="card__front" />
+        <div
+          :data-matchkey="card.matchKey"
+          class="card__back"
+        >
+          <img :src="`${card.imgUrl}`" class="card__img">
+        </div>
       </div>
     </div>
   </div>
@@ -19,6 +25,7 @@
 
 <script>
 
+import { TweenMax, Power2 } from 'gsap';
 
 export default {
   name: 'Card',
@@ -55,7 +62,19 @@ export default {
     },
   },
 
+  mounted() {
 
+    const randomAngle1 = Math.floor( Math.random() * 60 );
+    const randomAngle2 = Math.floor( Math.random() * 60 );
+
+    TweenMax.to('.card__inner2', 4.5, {
+      repeat: -1,
+      yoyo: true,
+      rotationX: 50,
+      rotationY: -40,
+      ease: Power2.easeInOut,
+    });
+  },
 
   methods: {
 
@@ -91,8 +110,13 @@ export default {
   height: 100%;
 }
 
+.card__inner2 {
+  transform-style: preserve-3d;
+  position: relative;
+}
+
+// what gets lipped by CSS
 .card__inner {
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
   transition: 0.6s;
   transform-style: preserve-3d;
   position: relative;
@@ -107,6 +131,8 @@ export default {
 }
 
 .card__inner,
+.card__inner2,
+
 .card__front,
 .card__back {
   border-radius: 5px;
